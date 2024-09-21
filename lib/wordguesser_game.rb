@@ -8,6 +8,7 @@ class WordGuesserGame
   attr_accessor :word
   attr_accessor :guesses
   attr_accessor :wrong_guesses
+  #attr_accessor :word_with_guesses
 
   def initialize(word)
     @word = word
@@ -16,20 +17,41 @@ class WordGuesserGame
   end
 
   def guess(letter)
+    if letter.nil? || letter == '' || !letter.match?(/[[:alpha:]]/)
+      raise ArgumentError.new
+    end
     l = letter.downcase
-    if (@guesses.include? i) || (@wrong_guesses.include? i)
+    if (@guesses.include? l) || (@wrong_guesses.include? l)
       false
-    elsif @word.include? i
-      @guesses = @guesses + i
+    elsif @word.include? l
+      @guesses = @guesses + l
       true
     else
-      @wrong_guesses = @wrong_guesses + i
+      @wrong_guesses = @wrong_guesses + l
       true
     end
   end
 
-  def guess_several_letters(letters)
+  def word_with_guesses
+    holder = ''
+    for a in (0...@word.length) do
+      if guesses.include? (@word[a])
+        holder = holder + @word[a]
+      else
+        holder = holder + '-'
+      end
+    end
+    holder
+  end
     
+  def check_win_or_lose
+    if wrong_guesses.length >= 7
+      :lose
+    elsif self.word_with_guesses == word
+      :win
+    else
+      :play
+    end
   end
 
   # You can test it by installing irb via $ gem install irb
